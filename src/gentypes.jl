@@ -315,6 +315,47 @@ function buildpackage(pkg::ROSPackage, rosrootmod::Module)
     @debug_subindent
 end
 
+function buildpackage_debug(pkg::ROSPackage, rosrootmod::Module)
+    @debug("Building package: ", _name(pkg))
+
+    #Create the top-level module for the package in Main
+    pkgsym = Symbol(_name(pkg))
+    pkgcode = :(module ($pkgsym) end)
+    pkginitcode = :(function __init__() end)
+    println(pkgcode)
+
+    println("hoge")
+    #Add msg and srv submodules if needed
+    @debug_addindent
+    if length(pkg.msg.members) > 0
+        msgmod = :(module msg end)
+        msgcode = modulecode(pkg.msg, rosrootmod)
+        for expr in msgcode
+            push!(msgmod.args[3].args, expr)
+        end
+        push!(pkgcode.args[3].args, msgmod)
+        for typ in pkg.msg.members
+            push!(pkginitcode.args[2].args, :(@rosimport $(pkgsym).msg: $(Symbol(typ))))
+        end
+    end
+    if length(pkg.srv.members) > 0
+        srvmod = :(module srv end)
+        srvcode = modulecode(pkg.srv, rosrootmod)
+        for expr in srvcode
+            push!(srvmod.args[3].args, expr)
+        end
+        push!(pkgcode.args[3].args, srvmod)
+        for typ in pkg.srv.members
+            push!(pkginitcode.args[2].args, :(@rosimport $(pkgsym).srv: $(Symbol(typ))))
+        end
+    end
+    push!(pkgcode.args[3].args, :(import RobotOS.@rosimport))
+    push!(pkgcode.args[3].args, pkginitcode)
+    pkgcode = Expr(:toplevel, pkgcode)
+    #rosrootmod.eval(pkgcode)
+    #@debug_subindent
+end
+
 #Generate all code for a .msg or .srv module
 function modulecode(mod::ROSModule, rosrootmod::Module)
     @debug("submodule: ", _fullname(mod))

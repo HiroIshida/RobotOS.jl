@@ -1,0 +1,88 @@
+:($(Expr(:toplevel, :(module std_msgs
+  #= /home/anne/documents/julia/RobotOS.jl/src/gentypes.jl:323 =#
+  #= /home/anne/documents/julia/RobotOS.jl/src/gentypes.jl:323 =#
+  module msg
+  #= /home/anne/documents/julia/RobotOS.jl/src/gentypes.jl:331 =#
+  #= /home/anne/documents/julia/RobotOS.jl/src/gentypes.jl:331 =#
+  begin
+      #= /home/anne/documents/julia/RobotOS.jl/src/gentypes.jl:366 =#
+      using PyCall
+      #= /home/anne/documents/julia/RobotOS.jl/src/gentypes.jl:367 =#
+      import Base: convert, getproperty
+      #= /home/anne/documents/julia/RobotOS.jl/src/gentypes.jl:368 =#
+      import RobotOS
+      #= /home/anne/documents/julia/RobotOS.jl/src/gentypes.jl:369 =#
+      import RobotOS.Time
+      #= /home/anne/documents/julia/RobotOS.jl/src/gentypes.jl:370 =#
+      import RobotOS.Duration
+      #= /home/anne/documents/julia/RobotOS.jl/src/gentypes.jl:371 =#
+      import RobotOS._typedefault
+      #= /home/anne/documents/julia/RobotOS.jl/src/gentypes.jl:372 =#
+      import RobotOS._typerepr
+  end
+  import RobotOS.AbstractMsg
+  export Header
+  mutable struct Header <: AbstractMsg
+      #= /home/anne/documents/julia/RobotOS.jl/src/gentypes.jl:497 =#
+      seq::UInt32
+      stamp::Time
+      frame_id::String
+  end
+  function Header()
+      #= /home/anne/documents/julia/RobotOS.jl/src/gentypes.jl:503 =#
+      Header(0x00000000, Time(0, 0), "")
+  end
+  function convert(::Type{PyObject}, o::Header)
+      #= /home/anne/documents/julia/RobotOS.jl/src/gentypes.jl:512 =#
+      py = pycall(RobotOS._rospy_objects["std_msgs/Header"], PyObject)
+      #= /home/anne/documents/julia/RobotOS.jl/src/gentypes.jl:514 =#
+      py.:("seq") = convert(PyObject, o.seq)
+      py.:("stamp") = convert(PyObject, o.stamp)
+      py.:("frame_id") = convert(PyObject, o.frame_id)
+      py
+  end
+  function convert(jlt::Type{Header}, o::PyObject)
+      #= /home/anne/documents/julia/RobotOS.jl/src/gentypes.jl:520 =#
+      if convert(String, o.:("_type")) != _typerepr(jlt)
+          #= /home/anne/documents/julia/RobotOS.jl/src/gentypes.jl:521 =#
+          throw(InexactError(:convert, Header, o))
+      end
+      #= /home/anne/documents/julia/RobotOS.jl/src/gentypes.jl:523 =#
+      jl = Header()
+      #= /home/anne/documents/julia/RobotOS.jl/src/gentypes.jl:525 =#
+      jl.seq = convert(UInt32, o.:("seq"))
+      jl.stamp = convert(Time, o.:("stamp"))
+      jl.frame_id = convert(String, o.:("frame_id"))
+      jl
+  end
+  function getproperty(::Type{Header}, s::Symbol)
+      #= /home/anne/documents/julia/RobotOS.jl/src/gentypes.jl:531 =#
+      try
+          #= /home/anne/documents/julia/RobotOS.jl/src/gentypes.jl:531 =#
+          getproperty(RobotOS._rospy_objects["std_msgs/Header"], s)
+      catch ex
+          #= /home/anne/documents/julia/RobotOS.jl/src/gentypes.jl:533 =#
+          ex isa KeyError || rethrow(ex)
+          #= /home/anne/documents/julia/RobotOS.jl/src/gentypes.jl:534 =#
+          try
+              #= /home/anne/documents/julia/RobotOS.jl/src/gentypes.jl:534 =#
+              getfield(Header, s)
+          catch ex2
+              #= /home/anne/documents/julia/RobotOS.jl/src/gentypes.jl:536 =#
+              startswith(ex2.msg, "type DataType has no field") || rethrow(ex2)
+              #= /home/anne/documents/julia/RobotOS.jl/src/gentypes.jl:537 =#
+              error("Message type '" * "Header" * "' has no property '$(s)'.")
+          end
+      end
+  end
+  _typerepr(::Type{Header}) = begin
+          #= /home/anne/documents/julia/RobotOS.jl/src/gentypes.jl:549 =#
+          "std_msgs/Header"
+      end
+  end
+  import RobotOS.@rosimport
+  function __init__()
+      #= /home/anne/documents/julia/RobotOS.jl/src/gentypes.jl:324 =#
+      #= /home/anne/documents/julia/RobotOS.jl/src/gentypes.jl:338 =# @rosimport std_msgs.msg:Header
+  end
+  end))))
