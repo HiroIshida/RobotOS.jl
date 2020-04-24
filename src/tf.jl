@@ -1,4 +1,10 @@
 export TransformListener, lookupTransform, waitForTransform
+export LookupException
+
+struct LookupException <: Exception 
+    msg::String
+end
+
 
 """
     TransformListener()
@@ -33,6 +39,7 @@ function lookupTransform(tl::TransformListener,
         pycall(tl.o.lookupTransform, PyAny, target_frame, source_frame, time)
     catch err
         if isa(err, PyCall.PyError)
+            err.T.__name__=="LookupException" && rethrow(LookupException("$(err.val.args[1])"))
             error_massage = generate_error_message(err)
             error(error_massage)
         else
